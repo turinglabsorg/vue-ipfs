@@ -29,7 +29,7 @@ const pinDirectoryToPinata = async () => {
       .on('uploadProgress', progress => {
         console.log(progress);
       });
-
+    console.log('--')
     console.log("Uploaded at: " + process.env.PINATA_ENDPOINT + JSON.parse(response.body).IpfsHash);
   } catch (error) {
     console.log(error);
@@ -38,7 +38,6 @@ const pinDirectoryToPinata = async () => {
 // Fix to relative paths
 const index = fs.readFileSync('../dist/index.html').toString()
 const fixed = index.replaceAll('href="/', 'href="./').replaceAll('src="/', 'src="./');
-console.log(fixed)
 fs.writeFileSync('../dist/index.html', fixed)
-
+// Upload to Pinata
 pinDirectoryToPinata()

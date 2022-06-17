@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "upload": "node --experimental-modules ipfs.js"
+    "deploy": "vue-cli-service build && cd ipfs && yarn upload"
   },
   "dependencies": {
     "core-js": "^3.6.5",

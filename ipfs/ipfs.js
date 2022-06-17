@@ -30,7 +30,7 @@ const pinDirectoryToPinata = async () => {
         console.log(progress);
       });
 
-    console.log("Uploaded at: " + JSON.parse(response.body).IpfsHash);
+    console.log("Uploaded at: " + process.env.PINATA_ENDPOINT + JSON.parse(response.body).IpfsHash);
   } catch (error) {
     console.log(error);
   }

@@ -37,7 +37,7 @@ const pinDirectoryToPinata = async () => {
 };
 // Fix to relative paths
 const index = fs.readFileSync('../dist/index.html').toString()
-const fixed = index.replaceAll('href="/', 'href="./').replaceAll('src="/', 'src="./');
+const fixed = index.replaceAll('href="/', 'href="./').replaceAll('src="/', 'src="./').replaceAll('img="/', 'img="./');
 fs.writeFileSync('../dist/index.html', fixed)
 // Upload to Pinata
 pinDirectoryToPinata()

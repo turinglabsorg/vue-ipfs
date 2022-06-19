@@ -1,43 +1,28 @@
 import fs from 'fs'
-import FormData from 'form-data'
-import rfs from 'recursive-fs'
-import basePathConverter from 'base-path-converter'
-import got from 'got'
 import dotenv from 'dotenv'
+import minimist from 'minimist'
+import { pinDirectoryToPinata } from './providers/pinata.js'
+import { pinDirectoryToWeb3Storage } from './providers/web3storage.js'
+// Bootstrap environment
 dotenv.config()
+const argv = minimist(process.argv.slice(2));
+let provider = 'pinata'
+if (argv._ !== undefined && argv._[0] !== undefined) {
+  provider = argv._[0].toLowerCase()
+}
+console.log('Using provider:', provider)
 
-const pinDirectoryToPinata = async () => {
-  const url = `https://api.pinata.cloud/pinning/pinFileToIPFS`;
-  const src = "../dist";
-  var status = 0;
-  try {
-    const { dirs, files } = await rfs.read(src);
-    let data = new FormData();
-    for (const file of files) {
-      data.append(`file`, fs.createReadStream(file), {
-        filepath: basePathConverter(src, file),
-      });
-    }
-    const response = await got(url, {
-      method: 'POST',
-      headers: {
-        "Content-Type": `multipart/form-data; boundary=${data._boundary}`,
-        "Authorization": "Bearer " + process.env.PINATA_KEY
-      },
-      body: data
-    })
-      .on('uploadProgress', progress => {
-        console.log(progress);
-      });
-    console.log('--')
-    console.log("Uploaded at: " + process.env.PINATA_ENDPOINT + JSON.parse(response.body).IpfsHash);
-  } catch (error) {
-    console.log(error);
-  }
-};
-// Fix to relative paths
+// Force build to relative paths
 const index = fs.readFileSync('../dist/index.html').toString()
 const fixed = index.replaceAll('href="/', 'href="./').replaceAll('src="/', 'src="./').replaceAll('img="/', 'img="./');
 fs.writeFileSync('../dist/index.html', fixed)
-// Upload to Pinata
-pinDirectoryToPinata()
+
+// Parse provider and be sure exists
+if (provider === 'pinata') {
+  // Upload to Pinata
+  pinDirectoryToPinata()
+} else if (provider === 'web3storage') {
+  pinDirectoryToWeb3Storage()
+} else {
+  console.log("Provider don't recognized.")
+}
